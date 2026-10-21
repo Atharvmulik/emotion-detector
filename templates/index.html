@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Detector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            margin: 0;
+            padding: 40px 16px;
+            color: #1f2937;
+        }
+
+        main {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 5px 24px #00000012;
+        }
+
+        h1 {
+            color: #4338ca;
+            text-align: center;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font: inherit;
+        }
+
+        button {
+            margin-top: 14px;
+            padding: 12px 20px;
+            border: 0;
+            border-radius: 8px;
+            background: #4338ca;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 22px;
+            padding: 14px;
+            background: #eef2ff;
+            border-radius: 8px;
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Emotion Detector</h1>
+        <p>
+            Enter a sentence to identify its dominant emotion.
+            The detector analyzes anger, disgust, fear, joy, and sadness.
+        </p>
+
+        <form id="emotion-form">
+            <label for="textToAnalyze">Your statement</label>
+            <textarea
+                id="textToAnalyze"
+                name="textToAnalyze"
+                placeholder="For example: I am very happy today!"
+                required
+            ></textarea>
+            <button type="submit">Analyze Emotion</button>
+        </form>
+
+        <div id="result" role="status" aria-live="polite">
+            Your results will appear here.
+        </div>
+    </main>
+
+    <script>
+        const form = document.getElementById("emotion-form");
+        const textInput = document.getElementById("textToAnalyze");
+        const result = document.getElementById("result");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const text = textInput.value.trim();
+
+            if (!text) {
+                result.textContent =
+                    "Please enter a statement before analyzing.";
+                return;
+            }
+
+            result.textContent = "Analyzing...";
+
+            try {
+                const url = new URL(
+                    "/emotionDetector",
+                    window.location.origin
+                );
+                url.searchParams.set("textToAnalyze", text);
+
+                const response = await fetch(url);
+
+                result.textContent = await response.text();
+            } catch (error) {
+                result.textContent =
+                    "Unable to connect to the application. Please try again.";
+            }
+        });
+    </script>
+</body>
+</html>
